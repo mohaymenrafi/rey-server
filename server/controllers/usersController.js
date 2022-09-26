@@ -56,7 +56,7 @@ const updateUser = asyncHandler(async (req, res) => {
 		!roles.length ||
 		typeof active !== "boolean"
 	) {
-		return res.status(400).json({ message: " All fields are required" });
+		return res.status(400).json({ message: "All fields are required" });
 	}
 	const user = await User.findById(id).exec();
 
@@ -64,7 +64,8 @@ const updateUser = asyncHandler(async (req, res) => {
 		return res.status(400).json({ message: "User not found" });
 	}
 	//check for duplicates
-	const duplicate = await User.find({ username }).lean().exec();
+	const duplicate = await User.findOne({ username }).lean().exec();
+	console.log(duplicate._id.toString());
 	if (duplicate && duplicate._id.toString() !== id) {
 		return res.status(409).json({ message: "Duplicate username" });
 	}
