@@ -3,7 +3,7 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 
 // @desc Get all users
-// @route GET /users
+// @route GET /api/users
 // @acess Private
 const getAllUsers = asyncHandler(async (req, res) => {
 	const users = await User.find().select("-password").lean();
@@ -14,7 +14,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 });
 
 // @desc create a new user
-// @route POST /users
+// @route POST /api/users
 // @acess Private
 const createNewUser = asyncHandler(async (req, res) => {
 	const { username, password, roles } = req.body;
@@ -43,7 +43,7 @@ const createNewUser = asyncHandler(async (req, res) => {
 });
 
 // @desc update a user
-// @route PUT /users
+// @route PUT /api/users
 // @acess Private
 const updateUser = asyncHandler(async (req, res) => {
 	const { id, username, roles, active, password } = req.body;
@@ -81,7 +81,7 @@ const updateUser = asyncHandler(async (req, res) => {
 });
 
 // @desc delete a user
-// @route DELETE /users
+// @route DELETE /api/users
 // @acess Private
 const deleteUser = asyncHandler(async (req, res) => {
 	const { id } = req.body;
