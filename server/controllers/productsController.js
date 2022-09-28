@@ -38,6 +38,7 @@ const createNewProduct = asyncHandler(async (req, res) => {
 // @access private
 const updateProduct = asyncHandler(async (req, res) => {
 	const id = req.params.id;
+
 	const updatedProduct = await Product.findByIdAndUpdate(
 		id,
 		{ $set: req.body },
