@@ -52,12 +52,14 @@ const createNewUser = asyncHandler(async (req, res) => {
 // @route PUT /api/users
 // @acess Private
 const updateUser = asyncHandler(async (req, res) => {
-	const { id, username, roles, active, password } = req.body;
+	const { id, username, roles, active, password, firstname, lastname, email } =
+		req.body;
 
 	//confirm data
 	if (
 		!id ||
 		!username ||
+		!email ||
 		!Array.isArray(roles) ||
 		!roles.length ||
 		typeof active !== "boolean"
@@ -71,13 +73,17 @@ const updateUser = asyncHandler(async (req, res) => {
 	}
 	//check for duplicates
 	const duplicate = await User.findOne({ username }).lean().exec();
-	console.log(duplicate._id.toString());
+
 	if (duplicate && duplicate._id.toString() !== id) {
 		return res.status(409).json({ message: "Duplicate username" });
 	}
 	user.username = username;
 	user.roles = roles;
 	user.active = active;
+	user.email = email;
+	user.firstname = firstname;
+	user.lastname = lastname;
+
 	if (password) {
 		user.password = await bcrypt.hash(password, 10);
 	}
