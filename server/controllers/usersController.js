@@ -17,10 +17,16 @@ const getAllUsers = asyncHandler(async (req, res) => {
 // @route POST /api/users
 // @acess Private
 const createNewUser = asyncHandler(async (req, res) => {
-	const { username, password, roles } = req.body;
+	const { firstname, lastname, email, username, password, roles } = req.body;
 
 	//confirm data
-	if (!username || !password || !Array.isArray(roles) || !roles.length) {
+	if (
+		!username ||
+		!password ||
+		!Array.isArray(roles) ||
+		!roles.length ||
+		!email
+	) {
 		return res.status(400).json({ message: "All fields are required" });
 	}
 	//check for duplicates
@@ -31,7 +37,7 @@ const createNewUser = asyncHandler(async (req, res) => {
 	//Hash Pass
 	const hashedPass = await bcrypt.hash(password, 10); // salt rounds
 
-	const userObject = { username, password: hashedPass, roles };
+	const userObject = { ...req.body, password: hashedPass };
 
 	//create a new user
 	const user = await User.create(userObject);
