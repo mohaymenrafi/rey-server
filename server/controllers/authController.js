@@ -8,16 +8,17 @@ const asyncHandler = require("express-async-handler");
 // @access Public
 const login = asyncHandler(async (req, res) => {
 	const { username, password } = req.body;
+	console.log(username, password);
 	if (!username || !password) {
 		return res.status(400).json({ message: "All fields are required" });
 	}
 	const foundUser = await User.findOne({ username }).exec();
 	if (!foundUser || !foundUser.active) {
-		return res.status(401).json({ message: "Unauthrized" });
+		return res.status(401).json({ message: "Unauthorized" });
 	}
 	const matchUser = await bcrypt.compare(password, foundUser.password);
 	if (!matchUser) {
-		return res.status(401).json({ message: "Unauthrized" });
+		return res.status(401).json({ message: "Unauthorized" });
 	}
 
 	const accessToken = jwt.sign(
@@ -28,7 +29,7 @@ const login = asyncHandler(async (req, res) => {
 			},
 		},
 		process.env.ACCESS_TOKEN_SECRET,
-		{ expiresIn: "10s" }
+		{ expiresIn: "60m" }
 	);
 
 	const refreshToken = jwt.sign(
@@ -54,7 +55,7 @@ const login = asyncHandler(async (req, res) => {
 // @access Public
 const refresh = asyncHandler(async (req, res) => {
 	const cookies = req.cookies;
-	if (!cookies?.jwt) return res.status(401).json({ message: "Unauthrized" });
+	if (!cookies?.jwt) return res.status(401).json({ message: "Unauthorized" });
 	const refreshToken = cookies.jwt;
 	jwt.verify(
 		refreshToken,
@@ -62,7 +63,7 @@ const refresh = asyncHandler(async (req, res) => {
 		asyncHandler(async (err, decode) => {
 			if (err) return res.status(403).json({ message: "Forbidden" });
 			const foundUser = await User.findOne({ username: decode.username });
-			if (!foundUser) return res.status(401).json({ message: "Unauthrized" });
+			if (!foundUser) return res.status(401).json({ message: "Unauthorized" });
 			const accessToken = jwt.sign(
 				{
 					UserInfo: {
@@ -71,7 +72,7 @@ const refresh = asyncHandler(async (req, res) => {
 					},
 				},
 				process.env.ACCESS_TOKEN_SECRET,
-				{ expiresIn: "10s" }
+				{ expiresIn: "60m" }
 			);
 			res.status(200).json({ accessToken });
 		})
