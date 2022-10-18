@@ -8,14 +8,15 @@ const asyncHandler = require("express-async-handler");
 // @access Public
 const login = asyncHandler(async (req, res) => {
 	const { username, password } = req.body;
-	console.log(username, password);
+
 	if (!username || !password) {
 		return res.status(400).json({ message: "All fields are required" });
 	}
-	const foundUser = await User.findOne({ username }).exec();
+	const foundUser = await User.findOne({ username }).lean().exec();
 	if (!foundUser || !foundUser.active) {
 		return res.status(401).json({ message: "Unauthorized" });
 	}
+	// console.log({ foundUser });
 	const matchUser = await bcrypt.compare(password, foundUser.password);
 	if (!matchUser) {
 		return res.status(401).json({ message: "Unauthorized" });
@@ -45,9 +46,19 @@ const login = asyncHandler(async (req, res) => {
 		secure: true,
 		maxAge: 7 * 24 * 60 * 60 * 1000, // expires in 7 days
 	});
+	const user = {
+		username: foundUser.username,
+		firstname: foundUser.firstname,
+		lastname: foundUser.lastname,
+		email: foundUser.email,
+		id: foundUser._id,
+		roles: foundUser.roles,
+		active: foundUser.active,
+		accessToken,
+	};
 
 	//send accessToken containing username and roles
-	res.send({ accessToken });
+	res.status(200).send(user);
 });
 
 // @desc Refresh
@@ -55,6 +66,7 @@ const login = asyncHandler(async (req, res) => {
 // @access Public
 const refresh = asyncHandler(async (req, res) => {
 	const cookies = req.cookies;
+	console.log({ cookies });
 	if (!cookies?.jwt) return res.status(401).json({ message: "Unauthorized" });
 	const refreshToken = cookies.jwt;
 	jwt.verify(
