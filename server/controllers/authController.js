@@ -55,6 +55,7 @@ const login = asyncHandler(async (req, res) => {
 		roles: foundUser.roles,
 		active: foundUser.active,
 		accessToken,
+		refreshToken,
 	};
 
 	//send accessToken containing username and roles

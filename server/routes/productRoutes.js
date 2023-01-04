@@ -4,12 +4,12 @@ const prdouctsController = require("../controllers/productsController");
 const verifyJWT = require("../middleware/verifyJWT");
 
 // router.use(verifyJWT);
-
+//.post(verifyJWT, prdouctsController.createNewProduct);
 router
 	.route("/")
 	.get(prdouctsController.getAllProducts)
-	.post(verifyJWT, prdouctsController.createNewProduct);
+	.post(prdouctsController.createNewProduct);
 
-router.put("/:id", verifyJWT, prdouctsController.updateProduct);
-router.delete("/:id", verifyJWT, prdouctsController.deleteProduct);
+router.put("/:id", prdouctsController.updateProduct);
+router.delete("/:id", prdouctsController.deleteProduct);
 module.exports = router;
