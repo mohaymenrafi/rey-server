@@ -7,8 +7,8 @@ const verifyJWT = require("../middleware/verifyJWT");
 //.post(verifyJWT, prdouctsController.createNewProduct);
 router
 	.route("/")
-	.get(prdouctsController.getAllProducts)
-	.post(prdouctsController.createNewProduct);
+	.get(verifyJWT, prdouctsController.getAllProducts)
+	.post(verifyJWT, prdouctsController.createNewProduct);
 
 router.put("/:id", prdouctsController.updateProduct);
 router.delete("/:id", prdouctsController.deleteProduct);

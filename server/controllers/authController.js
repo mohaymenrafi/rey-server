@@ -30,13 +30,13 @@ const login = asyncHandler(async (req, res) => {
 			},
 		},
 		process.env.ACCESS_TOKEN_SECRET,
-		{ expiresIn: "15m" }
+		{ expiresIn: "2m" }
 	);
 
 	const refreshToken = jwt.sign(
 		{ username: foundUser.username },
 		process.env.REFRESH_TOKEN_SECRET,
-		{ expiresIn: "30m" }
+		{ expiresIn: "2h" }
 	);
 
 	//create secure cookie with refresh token
@@ -67,7 +67,6 @@ const login = asyncHandler(async (req, res) => {
 // @access Public
 const refresh = asyncHandler(async (req, res) => {
 	const cookies = req.cookies;
-	console.log({ cookies });
 	if (!cookies?.jwt) return res.status(401).json({ message: "Unauthorized" });
 	const refreshToken = cookies.jwt;
 	jwt.verify(
@@ -85,7 +84,7 @@ const refresh = asyncHandler(async (req, res) => {
 					},
 				},
 				process.env.ACCESS_TOKEN_SECRET,
-				{ expiresIn: "60m" }
+				{ expiresIn: "2m" }
 			);
 			res.status(200).json({ accessToken });
 		})
