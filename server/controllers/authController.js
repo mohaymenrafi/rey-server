@@ -16,7 +16,6 @@ const login = asyncHandler(async (req, res) => {
 	if (!foundUser || !foundUser.active) {
 		return res.status(401).json({ message: "Unauthorized" });
 	}
-	// console.log({ foundUser });
 	const matchUser = await bcrypt.compare(password, foundUser.password);
 	if (!matchUser) {
 		return res.status(401).json({ message: "Unauthorized" });
@@ -36,14 +35,14 @@ const login = asyncHandler(async (req, res) => {
 	const refreshToken = jwt.sign(
 		{ username: foundUser.username },
 		process.env.REFRESH_TOKEN_SECRET,
-		{ expiresIn: "20s" }
+		{ expiresIn: "20d" }
 	);
 
 	//create secure cookie with refresh token
 	res.cookie("jwt", refreshToken, {
 		httpOnly: true,
 		sameSite: "None",
-		secure: true,
+		secure: true, //TODO:make it true
 		maxAge: 7 * 24 * 60 * 60 * 1000, // expires in 7 days
 	});
 	const user = {
@@ -93,13 +92,13 @@ const refresh = asyncHandler(async (req, res) => {
 
 // @desc Logout
 // @route POST /auth/logout
-// @access Public
-const logout = asyncHandler(async (req, res) => {
+// @access Private
+const logout = (req, res) => {
 	const cookies = req.cookies;
 	if (!cookies?.jwt) return res.sendStatus(204); //no content
 	res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
-	res.json({ message: "Cookie cleared" });
-});
+	res.json({ message: "Cookies cleared" });
+};
 
 module.exports = {
 	login,
