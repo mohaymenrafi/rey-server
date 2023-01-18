@@ -7,7 +7,6 @@ const asyncHandler = require("express-async-handler");
 const getACart = asyncHandler(async (req, res) => {
 	const userId = req.params.id;
 	const cart = await Cart.findOne({ userId });
-	console.log(cart);
 	if (cart) {
 		return res.json(cart);
 	}
@@ -22,7 +21,7 @@ const createACart = asyncHandler(async (req, res) => {
 	const userId = req.params.id;
 
 	const cart = await Cart.findOne({ userId });
-	console.log({ cart });
+
 	if (cart) {
 		const itemIndex = cart.products.findIndex((product) => {
 			return (
@@ -68,17 +67,54 @@ const createACart = asyncHandler(async (req, res) => {
 // @desc Create a cart
 // @route PUT /api/cart/:id
 // @access private
-// const updateACart = asyncHandler(async () => {});
+const updateACart = asyncHandler(async (req, res) => {
+	const userId = req.params.id;
+	const { productId, quantity, color, size, action } = req.body;
+	//here action must contain of these 3 options: INCREMENT | DECREMENT | DELETEITEM
+	const cart = await Cart.findOne({ userId });
+	if (!cart) {
+		return res.status(400).json({
+			error: "Cart not found for this user, please add some products first",
+		});
+	}
+	const itemIndex = cart.products.findIndex((product) => {
+		return (
+			product.productId === productId &&
+			product.color === color &&
+			product.size === size
+		);
+	});
+	if (itemIndex === -1) {
+		return res.status(400).json({ message: "Product not found in the cart" });
+	}
+	if (action === "INCREMENT") {
+		cart.products[itemIndex].quantity += 1;
+	} else if (action === "DECREMENT") {
+		cart.products[itemIndex].quantity -= 1;
+	} else if (action === "DELETEITEM") {
+		cart.products = cart.products.filter((_, idx) => idx !== itemIndex);
+	}
+	const updatedCart = await cart.save();
+
+	res.status(200).json(updatedCart);
+});
 
 // @desc Create a cart
 // @route DELETE /api/cart/:id
 // @access private
-// const deleteACart = asyncHandler(async () => {});
+const deleteACart = asyncHandler(async (req, res) => {
+	const userId = req.params.id;
+	const cart = await Cart.findOne({ userId });
+	if (!cart) {
+		return res.status(400).json({ error: "Cart not found of this user" });
+	}
+	const result = await cart.delete();
+	res.status(200).send({ message: `cart deleted successfully` });
+});
 
 module.exports = {
 	getACart,
 	createACart,
+	updateACart,
+	deleteACart,
 };
-
-// write api for udpate a cart and delete a cart item. also for clearing a cart.
-// send userId to find the cart of the user , send proeuct id, size & color to find out the product and then update or delete it.
