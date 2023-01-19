@@ -17,8 +17,13 @@ const getACart = asyncHandler(async (req, res) => {
 // @route POST /api/cart/:id
 // @access private
 const createACart = asyncHandler(async (req, res) => {
-	const { productId, quantity, title, price, color, size } = req.body;
+	const { productId, title, img, quantity, price, color, size } = req.body;
 	const userId = req.params.id;
+	console.log(size);
+
+	if (!productId || !quantity || !price || !title || !size || !color) {
+		return res.status(422).json({ error: "Required information missing " });
+	}
 
 	const cart = await Cart.findOne({ userId });
 
@@ -37,8 +42,9 @@ const createACart = asyncHandler(async (req, res) => {
 		} else {
 			cart.products.push({
 				productId,
-				quantity,
 				title,
+				img,
+				quantity,
 				price,
 				color,
 				size,
@@ -52,8 +58,9 @@ const createACart = asyncHandler(async (req, res) => {
 			products: [
 				{
 					productId,
-					quantity,
 					title,
+					img,
+					quantity,
 					price,
 					color,
 					size,
