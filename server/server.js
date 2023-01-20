@@ -6,6 +6,7 @@ const path = require("path");
 const { logger, logEvents } = require("./middleware/logger");
 const errorHandler = require("./middleware/errorHandler");
 const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 const corsOptions = require("./config/corsOptions");
 const connectDB = require("./config/dbConfig");
 const mongoose = require("mongoose");
@@ -14,6 +15,7 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 app.use(cors(corsOptions));
 app.use(logger);
+app.use("/api", require("./routes/checkoutRoutes"));
 app.use(express.json());
 app.use(cookieParser());
 
