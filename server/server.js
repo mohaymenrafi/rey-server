@@ -15,6 +15,7 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 app.use(cors(corsOptions));
 app.use(logger);
+// this route is declared before express.json() middleware to get raw req.body for stripe signature verification
 app.use("/api", require("./routes/checkoutRoutes"));
 app.use(express.json());
 app.use(cookieParser());

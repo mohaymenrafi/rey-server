@@ -3,6 +3,12 @@ const mongoose = require("mongoose");
 const orderSchema = new mongoose.Schema(
 	{
 		userId: { type: String, required: true },
+		totalPrice: Number,
+		delivered: {
+			type: String,
+			enum: ["PENDING", "DELIVERED"],
+			default: "PENDING",
+		},
 		products: [
 			{
 				productId: String,
@@ -14,12 +20,6 @@ const orderSchema = new mongoose.Schema(
 				color: String,
 			},
 		],
-		totalPrice: Number,
-		delivered: {
-			type: String,
-			enum: ["PENDING", "DELIVERED"],
-			default: "PENDING",
-		},
 	},
 	{ timestamps: true }
 );

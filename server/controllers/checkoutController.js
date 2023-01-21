@@ -2,13 +2,28 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const Cart = require("../models/Cart");
 const asyncHandler = require("express-async-handler");
 const { response } = require("express");
+const Order = require("../models/Order");
 
 const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
 
-const fulfillOrder = (lineItems) => {
-	//TODO: add to mongodb  order Database
-
-	console.log("Fulfilling order", lineItems);
+const fulfillOrder = async (session) => {
+	const productsData = session.line_items.data.map((item, idx) => {
+		return {
+			productId: JSON.parse(session.metadata.productId)[idx],
+			img: JSON.parse(session.metadata.images)[idx],
+			title: item.description,
+			quantity: item.quantity,
+			price: item.amount_subtotal,
+			size: JSON.parse(session.metadata.sizes)[idx],
+			color: JSON.parse(session.metadata.colors)[idx],
+		};
+	});
+	const newOrder = await Order.create({
+		userId: session.metadata.userId,
+		totalPrice: session.amount_total,
+		delivered: "DELIVERED",
+		products: productsData,
+	});
 };
 
 const checkoutSession = asyncHandler(async (req, res) => {
@@ -17,13 +32,12 @@ const checkoutSession = asyncHandler(async (req, res) => {
 
 	if (cart) {
 		const transformedItems = cart.products.map((item) => {
-			//TODO: ADD TAX SUPPORT HERE. O/W REMOVE FROM THE FRONTEND. HERE TAX IS NOT CALCULATED.
 			return {
 				quantity: item.quantity,
+				adjustable_quantity: { enabled: true },
 				price_data: {
 					currency: "usd",
 					unit_amount: item.price,
-					tax_behavior: "inclusive",
 					product_data: {
 						name: item.title,
 						images: [item.img],
@@ -38,10 +52,24 @@ const checkoutSession = asyncHandler(async (req, res) => {
 
 		const session = await stripe.checkout.sessions.create({
 			line_items: transformedItems,
+			automatic_tax: {
+				enabled: true,
+			},
+
+			shipping_address_collection: {
+				allowed_countries: ["US", "CA", "BD"],
+			},
 			mode: "payment",
 			payment_method_types: ["card"],
 			success_url: `${process.env.SITE_URL}/order/success?session_id={CHECKOUT_SESSION_ID}`,
 			cancel_url: `${process.env.SITE_URL}/cart`,
+			metadata: {
+				images: JSON.stringify(cart.products.map((item) => item.img)),
+				colors: JSON.stringify(cart.products.map((item) => item.color)),
+				sizes: JSON.stringify(cart.products.map((item) => item.size)),
+				productId: JSON.stringify(cart.products.map((item) => item.productId)),
+				userId,
+			},
 		});
 		res.send({ url: session.url });
 	}
@@ -56,8 +84,6 @@ const checkoutSuccess = asyncHandler(async (req, res) => {
 const checkoutWebhook = asyncHandler(async (req, res) => {
 	const payload = req.body;
 	const sig = req.headers["stripe-signature"];
-	// const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
-	// console.log(session);
 	let event;
 
 	try {
@@ -68,8 +94,6 @@ const checkoutWebhook = asyncHandler(async (req, res) => {
 
 	// Handle the checkout.session.completed event
 	if (event.type === "checkout.session.completed") {
-		// console.log(event.data);
-		// console.log({ event });
 		const session = event.data.object;
 		const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
 			session.id,
@@ -77,11 +101,8 @@ const checkoutWebhook = asyncHandler(async (req, res) => {
 				expand: ["line_items"],
 			}
 		);
-		console.log({ sessionWithLineItems });
-		const lineItems = sessionWithLineItems.line_items;
-
-		// Fulfill the purchase...
-		fulfillOrder(lineItems);
+		// Fulfill the purchase to save order in DB...
+		fulfillOrder(sessionWithLineItems);
 	}
 
 	res.status(200).end();
