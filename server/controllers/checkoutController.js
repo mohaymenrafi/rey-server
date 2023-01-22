@@ -23,7 +23,13 @@ const fulfillOrder = async (session) => {
 		totalPrice: session.amount_total,
 		delivered: "DELIVERED",
 		products: productsData,
+		allImages: JSON.parse(session.metadata.images),
 	});
+
+	// const userCart = Cart.findOne({ userId });
+	// if (userCart) {
+	// 	const result = await userCart.delete();
+	// }
 };
 
 const checkoutSession = asyncHandler(async (req, res) => {
@@ -57,7 +63,7 @@ const checkoutSession = asyncHandler(async (req, res) => {
 			},
 
 			shipping_address_collection: {
-				allowed_countries: ["US", "CA", "BD"],
+				allowed_countries: ["US", "CA"],
 			},
 			mode: "payment",
 			payment_method_types: ["card"],
