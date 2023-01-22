@@ -43,7 +43,9 @@ const updateProduct = asyncHandler(async (req, res) => {
 		id,
 		{ $set: req.body },
 		{ new: true }
-	);
+	)
+		.lean()
+		.exec();
 	res.status(200).send(updatedProduct);
 });
 
@@ -52,7 +54,7 @@ const updateProduct = asyncHandler(async (req, res) => {
 // @access private
 const deleteProduct = asyncHandler(async (req, res) => {
 	const id = req.params.id;
-	const deletedProduct = await Product.findByIdAndDelete(id);
+	const deletedProduct = await Product.findByIdAndDelete(id).lean().exec();
 	res
 		.status(200)
 		.json({ message: `${deletedProduct.title} has been deleted ` });

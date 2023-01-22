@@ -34,7 +34,7 @@ const fulfillOrder = async (session) => {
 
 const checkoutSession = asyncHandler(async (req, res) => {
 	const userId = req.params.id;
-	const cart = await Cart.findOne({ userId });
+	const cart = await Cart.findOne({ userId }).lean().exec();
 
 	if (cart) {
 		const transformedItems = cart.products.map((item) => {

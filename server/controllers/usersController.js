@@ -66,7 +66,7 @@ const updateUser = asyncHandler(async (req, res) => {
 	) {
 		return res.status(400).json({ message: "All fields are required" });
 	}
-	const user = await User.findById(id).exec();
+	const user = await User.findById(id).lean().exec();
 
 	if (!user) {
 		return res.status(400).json({ message: "User not found" });
@@ -100,7 +100,7 @@ const deleteUser = asyncHandler(async (req, res) => {
 	if (!id) {
 		return res.status(400).json({ message: "ID is required" });
 	}
-	const user = await User.findById(id);
+	const user = await User.findById(id).lean().exec();
 	if (!user) {
 		return res.status(400).json({ message: "User is not found" });
 	}

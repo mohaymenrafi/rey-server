@@ -9,7 +9,7 @@ const getOrder = asyncHandler(async (req, res) => {
 	if (!userId) {
 		return res.send({ message: "Invalid user ID" });
 	}
-	const orders = await Order.find({ userId });
+	const orders = await Order.find({ userId }).lean().exec();
 	if (orders.length) {
 		return res.status(200).json(orders);
 	}
