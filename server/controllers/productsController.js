@@ -5,11 +5,24 @@ const asyncHandler = require("express-async-handler");
 // @route GET /api/products
 // @access public
 const getAllProducts = asyncHandler(async (req, res) => {
-	const products = await Product.find().lean();
+	let { limit = 12, page = 1 } = req.query;
+	if (typeof limit !== "number") limit = parseInt(limit);
+	if (typeof page !== "number") page = parseInt(page);
+
+	const products = await Product.find()
+		.limit(limit)
+		.skip((page - 1) * limit)
+		.lean();
+
+	const count = await Product.countDocuments();
 	if (!products?.length) {
 		return res.status(400).json({ message: "Product not found" });
 	}
-	res.json(products);
+	res.status(200).json({
+		products,
+		totalPages: Math.ceil(count / limit),
+		currentPage: page,
+	});
 });
 
 // @desc create a new product
