@@ -5,16 +5,23 @@ const asyncHandler = require("express-async-handler");
 // @route GET /api/products
 // @access public
 const getAllProducts = asyncHandler(async (req, res) => {
-	let { limit = 12, page = 1 } = req.query;
+	let { limit = 12, page = 1, category, color, size } = req.query;
+
 	if (typeof limit !== "number") limit = parseInt(limit);
 	if (typeof page !== "number") page = parseInt(page);
-
-	const products = await Product.find()
+	let filterConfig = {};
+	if (category) {
+		filterConfig.categories = category;
+	}
+	console.log(filterConfig);
+	const products = await Product.find(filterConfig)
 		.limit(limit)
 		.skip((page - 1) * limit)
-		.lean();
+		.lean()
+		.exec();
 
-	const count = await Product.countDocuments();
+	const count = await Product.countDocuments(filterConfig);
+
 	if (!products?.length) {
 		return res.status(400).json({ message: "Product not found" });
 	}
@@ -79,3 +86,7 @@ module.exports = {
 	updateProduct,
 	deleteProduct,
 };
+
+// const filterQueryObj = Object.fromEntries(
+// 	Object.entries(queryObj).filter(([_, value]) => !!value)
+// );

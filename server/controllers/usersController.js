@@ -30,7 +30,7 @@ const createNewUser = asyncHandler(async (req, res) => {
 		return res.status(400).json({ message: "All fields are required" });
 	}
 	//check for duplicates
-	const duplicate = await User.findOne({ username }).lean().exec();
+	const duplicate = await User.findOne({ username }).exec();
 	if (duplicate) {
 		return res.status(409).json({ message: "Duplicate username" });
 	}
@@ -72,7 +72,7 @@ const updateUser = asyncHandler(async (req, res) => {
 		return res.status(400).json({ message: "User not found" });
 	}
 	//check for duplicates
-	const duplicate = await User.findOne({ username }).lean().exec();
+	const duplicate = await User.findOne({ username }).exec();
 
 	if (duplicate && duplicate._id.toString() !== id) {
 		return res.status(409).json({ message: "Duplicate username" });

@@ -6,7 +6,7 @@ const asyncHandler = require("express-async-handler");
 // @access private
 const getACart = asyncHandler(async (req, res) => {
 	const userId = req.params.id;
-	const cart = await Cart.findOne({ userId }).lean().exec();
+	const cart = await Cart.findOne({ userId }).exec();
 	if (cart) {
 		return res.json(cart);
 	}
@@ -25,7 +25,7 @@ const createACart = asyncHandler(async (req, res) => {
 		return res.status(422).json({ error: "Required information missing " });
 	}
 
-	const cart = await Cart.findOne({ userId }).lean().exec();
+	const cart = await Cart.findOne({ userId }).exec();
 
 	if (cart) {
 		const itemIndex = cart.products.findIndex((product) => {
@@ -78,7 +78,7 @@ const updateACart = asyncHandler(async (req, res) => {
 	const userId = req.params.id;
 	const { productId, quantity, color, size, action } = req.body;
 	//here action must contain of these 3 options: INCREMENT | DECREMENT | DELETEITEM
-	const cart = await Cart.findOne({ userId }).lean().exec();
+	const cart = await Cart.findOne({ userId }).exec();
 	if (!cart) {
 		return res.status(400).json({
 			error: "Cart not found for this user, please add some products first",
@@ -111,7 +111,7 @@ const updateACart = asyncHandler(async (req, res) => {
 // @access private
 const deleteACart = asyncHandler(async (req, res) => {
 	const userId = req.params.id;
-	const cart = await Cart.findOne({ userId }).lean().exec();
+	const cart = await Cart.findOne({ userId }).exec();
 	if (!cart) {
 		return res.status(400).json({ error: "Cart not found of this user" });
 	}

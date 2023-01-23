@@ -12,7 +12,7 @@ const login = asyncHandler(async (req, res) => {
 	if (!username || !password) {
 		return res.status(400).json({ message: "All fields are required" });
 	}
-	const foundUser = await User.findOne({ username }).lean().exec();
+	const foundUser = await User.findOne({ username }).exec();
 	if (!foundUser || !foundUser.active) {
 		return res.status(401).json({ message: "Unauthorized" });
 	}
@@ -29,7 +29,7 @@ const login = asyncHandler(async (req, res) => {
 			},
 		},
 		process.env.ACCESS_TOKEN_SECRET,
-		{ expiresIn: "15m" }
+		{ expiresIn: "150m" }
 	);
 
 	const refreshToken = jwt.sign(
@@ -83,7 +83,7 @@ const refresh = asyncHandler(async (req, res) => {
 					},
 				},
 				process.env.ACCESS_TOKEN_SECRET,
-				{ expiresIn: "15m" }
+				{ expiresIn: "150m" }
 			);
 			res.status(200).json({ accessToken });
 		})
