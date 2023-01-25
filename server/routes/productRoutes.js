@@ -7,9 +7,10 @@ const verifyJWT = require("../middleware/verifyJWT");
 //.post(verifyJWT, prdouctsController.createNewProduct);
 router
 	.route("/")
-	.get(verifyJWT, prdouctsController.getAllProducts)
-	.post(verifyJWT, prdouctsController.createNewProduct);
+	.get(prdouctsController.getAllProducts)
+	.post(prdouctsController.createNewProduct);
 
 router.put("/:id", prdouctsController.updateProduct);
 router.delete("/:id", prdouctsController.deleteProduct);
+router.get("/toppicks", prdouctsController.getTopPicks);
 module.exports = router;
