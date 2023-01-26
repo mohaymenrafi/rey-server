@@ -13,3 +13,4 @@
 20230126	16:22:43	df3fbd92-7cfd-423b-a7fe-a93bedc2b6ee	GET	/api/orders/63b81211bff6599dd3ada7b3	http://localhost:4000
 20230126	16:22:50	6dcf52a7-c656-4f5c-b0f7-a8f3851ecd99	GET	/api/orders/63b81211bff6599dd3ada7b3	http://localhost:4000
 20230126	16:22:51	04d3c442-d082-49f8-b9ba-f2d977dc5bc2	GET	/api/orders/63b81211bff6599dd3ada7b3	http://localhost:4000
+20230126	18:45:53	3b99ea0c-3c98-434b-a576-da63415459a1	POST	/api/auth	undefined
