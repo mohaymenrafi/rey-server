@@ -1,2 +1,15 @@
 20230126	16:03:40	bcb28be1-8be8-4738-8d41-e168fac756f1	GET	/api/products/	undefined
 20230126	16:03:58	16235738-71a5-4428-b56e-9342108653a1	POST	/api/auth	undefined
+20230126	16:22:25	0d36ea57-e343-4f46-a718-4c71a488e05d	POST	/api/auth	http://localhost:4000
+20230126	16:22:26	5a5f3d8f-ece7-474d-a404-6a4488533ad6	GET	/api/orders/63b81211bff6599dd3ada7b3	http://localhost:4000
+20230126	16:22:26	1ae4bdac-a47b-4a13-8723-57296875aefd	GET	/api/orders/63b81211bff6599dd3ada7b3	http://localhost:4000
+20230126	16:22:29	adbd0a13-ed5f-493d-b9bf-d055e9a3a1b7	GET	/api/products/toppicks	http://localhost:4000
+20230126	16:22:30	f2ba42dd-a21c-444d-99b3-66e83886631e	GET	/api/products/toppicks	http://localhost:4000
+20230126	16:22:35	b65283ff-4e95-4b8c-a9bb-6e21020a23e9	GET	/api/orders/63b81211bff6599dd3ada7b3	http://localhost:4000
+20230126	16:22:36	ac396597-d881-46e6-ab27-a83113d4e274	GET	/api/orders/63b81211bff6599dd3ada7b3	http://localhost:4000
+20230126	16:22:41	e3e8ad55-6b8f-43ca-98db-ff58bae7978d	GET	/api/cart/63b81211bff6599dd3ada7b3	http://localhost:4000
+20230126	16:22:41	78be74e0-44b8-415e-a042-0ec6905ea638	GET	/api/cart/63b81211bff6599dd3ada7b3	http://localhost:4000
+20230126	16:22:42	62a7a522-cbb2-4e89-9f85-ae77116cb6ee	GET	/api/orders/63b81211bff6599dd3ada7b3	http://localhost:4000
+20230126	16:22:43	df3fbd92-7cfd-423b-a7fe-a93bedc2b6ee	GET	/api/orders/63b81211bff6599dd3ada7b3	http://localhost:4000
+20230126	16:22:50	6dcf52a7-c656-4f5c-b0f7-a8f3851ecd99	GET	/api/orders/63b81211bff6599dd3ada7b3	http://localhost:4000
+20230126	16:22:51	04d3c442-d082-49f8-b9ba-f2d977dc5bc2	GET	/api/orders/63b81211bff6599dd3ada7b3	http://localhost:4000
