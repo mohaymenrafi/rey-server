@@ -1,14 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const cartController = require("../controllers/cartController");
-
-// TODO: Add jwt verification
+const verifyJWT = require("../middleware/verifyJWT");
 
 router
 	.route("/:id")
-	.post(cartController.createACart)
-	.get(cartController.getACart)
-	.put(cartController.updateACart)
-	.delete(cartController.deleteACart);
+	.post(verifyJWT, cartController.createACart)
+	.get(verifyJWT, cartController.getACart)
+	.put(verifyJWT, cartController.updateACart)
+	.delete(verifyJWT, cartController.deleteACart);
 
 module.exports = router;
