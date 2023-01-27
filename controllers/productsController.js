@@ -9,12 +9,12 @@ const getAllProducts = asyncHandler(async (req, res) => {
 
 	if (typeof limit !== "number") limit = parseInt(limit);
 	if (typeof page !== "number") page = parseInt(page);
-	// let filterConfig = {};
-	// if (category) {
-	// 	filterConfig.categories = category;
-	// }
+	let filterConfig = {};
+	if (category) {
+		filterConfig.categories = category;
+	}
 	// console.log(filterConfig);
-	const products = await Product.find()
+	const products = await Product.find(filterConfig)
 		.limit(limit)
 		.skip((page - 1) * limit)
 		.lean()
@@ -36,7 +36,6 @@ const getAllProducts = asyncHandler(async (req, res) => {
 // @route POST /api/products/toppicks
 // @access public
 const getTopPicks = asyncHandler(async (req, res) => {
-	console.log("hitting");
 	const products = await Product.find().limit(4).lean();
 	if (!products) {
 		return res.status(400).json({ error: "Product not found" });
