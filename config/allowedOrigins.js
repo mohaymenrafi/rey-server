@@ -1,5 +1,5 @@
 const allowedOrigins = [
-	"https://rey-server.onrender.com/",
+	"https://rey-server.onrender.com",
 	"https://reyfurnisher.vercel.app",
 	"http://localhost:4000",
 	"http://localhost:3000",
