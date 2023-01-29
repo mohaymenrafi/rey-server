@@ -1,5 +1,6 @@
 const Product = require("../models/Product");
 const asyncHandler = require("express-async-handler");
+const mongoose = require("mongoose");
 
 // @desc Get all products
 // @route GET /api/products
@@ -13,14 +14,14 @@ const getAllProducts = asyncHandler(async (req, res) => {
 	if (category) {
 		filterConfig.categories = category;
 	}
-	// console.log(filterConfig);
+
 	const products = await Product.find(filterConfig)
 		.limit(limit)
 		.skip((page - 1) * limit)
 		.lean()
 		.exec();
 
-	const count = await Product.countDocuments();
+	const count = await Product.countDocuments(filterConfig);
 
 	if (!products?.length) {
 		return res.status(400).json({ message: "Product not found" });
@@ -32,15 +33,38 @@ const getAllProducts = asyncHandler(async (req, res) => {
 	});
 });
 
+// @desc get a single product
+// @route GET /api/products/:id
+// @access public
+const singleProduct = asyncHandler(async (req, res) => {
+	const _id = req.params.id;
+	const product = await Product.findOne({ _id }).exec();
+	if (!product) {
+		return res.status(400).json({ message: "Product not found" });
+	}
+
+	let relatedProducts = await Product.find({
+		categories: product.categories,
+	})
+		.lean()
+		.exec();
+	relatedProducts = relatedProducts.filter((item) => {
+		// console.log(item._id);
+		return !item._id.equals(mongoose.Types.ObjectId(_id));
+	});
+
+	res.status(200).json({ product, relatedProducts });
+});
+
 // @desc get limited products
-// @route POST /api/products/toppicks
+// @route GET /api/products/toppicks
 // @access public
 const getTopPicks = asyncHandler(async (req, res) => {
+	console.log("hitting top picks");
 	const products = await Product.find().limit(4).lean();
-	if (!products) {
-		return res.status(400).json({ error: "Product not found" });
-	}
-	res.status(200).json(products);
+	return products
+		? res.status(200).json(products)
+		: res.status(400).json({ message: "No products found" });
 });
 
 // @desc create a new product
@@ -97,6 +121,7 @@ module.exports = {
 	updateProduct,
 	deleteProduct,
 	getTopPicks,
+	singleProduct,
 };
 
 // const filterQueryObj = Object.fromEntries(
