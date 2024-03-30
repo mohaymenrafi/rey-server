@@ -107,6 +107,7 @@ const checkoutWebhook = asyncHandler(async (req, res) => {
 				expand: ["line_items"],
 			}
 		);
+
 		// Fulfill the purchase to save order in DB...
 		fulfillOrder(sessionWithLineItems);
 	}

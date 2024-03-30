@@ -6,11 +6,16 @@ const asyncHandler = require("express-async-handler");
 // @access private
 const getACart = asyncHandler(async (req, res) => {
 	const userId = req.params.id;
-	const cart = await Cart.findOne({ userId }).exec();
-	if (cart) {
-		return res.json(cart);
+	try {
+		const cart = await Cart.findOne({ userId }).exec();
+		if (cart) {
+			return res.json(cart);
+		} else {
+			return res.json([]);
+		}
+	} catch (err) {
+		res.status(400).json({ message: "No products in the cart" });
 	}
-	res.status(400).json({ message: "No products in the cart" });
 });
 
 // @desc Create a cart
@@ -112,11 +117,10 @@ const updateACart = asyncHandler(async (req, res) => {
 const deleteACart = asyncHandler(async (req, res) => {
 	const userId = req.params.id;
 	const cart = await Cart.findOne({ userId }).exec();
-	if (!cart) {
-		return res.status(400).json({ error: "Cart not found of this user" });
+	if (cart) {
+		await cart.delete();
+		res.status(200).send({ message: `cart deleted successfully` });
 	}
-	const result = await cart.delete();
-	res.status(200).send({ message: `cart deleted successfully` });
 });
 
 module.exports = {
